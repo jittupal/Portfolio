@@ -19,8 +19,8 @@ export default function Contact() {
     setErrorText('');
 
     try {
-      // 100% Free FormSubmit Service directed straight to personal email
-      const response = await fetch(`https://formsubmit.co/ajax/${personalData.email}`, {
+      // Using activated token string to protect raw email address from scrapers
+      const response = await fetch('https://formsubmit.co/ajax/3ddaa4deb629b0060a7b55b8ca9140bf', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export default function Contact() {
           name: formData.name,
           email: formData.email,
           message: formData.message,
-          _subject: `New Portfolio Inquiry from ${formData.name}`,
+          _subject: `New Portfolio Message from ${formData.name}`,
           _template: 'table'
         })
       });
@@ -45,9 +45,8 @@ export default function Contact() {
       }
     } catch (err) {
       console.error('Email send error:', err);
-      // Fallback: Open mailto directly if request is blocked by ad-blocker
       setStatus('error');
-      setErrorText('Connection error. You can click email link on the left to send directly.');
+      setErrorText('Message delivery failed. Please click the direct email link on the left.');
     }
   };
 
@@ -94,21 +93,18 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-white/15 space-y-4 text-xs shadow-inner">
                 
                 {status === 'success' && (
-                  <div className="p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-bold text-sm text-white">Message Delivered Successfully!</h4>
-                      <p className="text-xs text-emerald-200 mt-0.5">
-                        Your inquiry has been sent directly to <strong className="text-white">{personalData.email}</strong>. I will get back to you shortly!
-                      </p>
-                      <button 
-                        type="button" 
-                        onClick={() => setStatus('idle')} 
-                        className="mt-2 text-[11px] font-bold text-emerald-300 hover:underline"
-                      >
-                        Send another message →
-                      </button>
+                  <div className="p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-100 flex items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400 shrink-0" />
+                      <span className="font-semibold text-white">Thank you! Your message has been sent.</span>
                     </div>
+                    <button 
+                      type="button" 
+                      onClick={() => setStatus('idle')} 
+                      className="text-[11px] font-bold text-emerald-300 hover:underline shrink-0"
+                    >
+                      Send another
+                    </button>
                   </div>
                 )}
 
@@ -167,17 +163,13 @@ export default function Contact() {
                   className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 font-bold text-white shadow-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm disabled:opacity-60"
                 >
                   {status === 'loading' ? (
-                    <><Loader2 className="w-4 h-4 animate-spin text-white" /> Sending to Inbox...</>
+                    <><Loader2 className="w-4 h-4 animate-spin text-white" /> Sending Message...</>
                   ) : status === 'success' ? (
-                    <><CheckCircle2 className="w-4 h-4 text-emerald-300" /> Sent to Inbox!</>
+                    <><CheckCircle2 className="w-4 h-4 text-emerald-300" /> Message Sent!</>
                   ) : (
-                    <><Send className="w-4 h-4" /> Send Inquiry to Inbox</>
+                    <><Send className="w-4 h-4" /> Send Message</>
                   )}
                 </button>
-
-                <p className="text-[11px] text-center text-slate-400 pt-1">
-                  100% Free Instant Email Delivery • Sends directly to {personalData.email}
-                </p>
               </form>
             </div>
 
